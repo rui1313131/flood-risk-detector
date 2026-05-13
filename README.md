@@ -56,20 +56,31 @@ pip install -r requirements.txt
 
 **事前準備:**
 - Python 3.10 以上（python.org または `winget install Python.Python.3.11`）
-- Git for Windows（Git Bash を使う場合）
+- Git for Windows（推奨。`git clone` と Git Bash が入る）
 
-**Git Bash:**
+シェル別に `venv` の有効化コマンドが異なります。**自分が使っているシェルに合った節を選んでください。**
 
-```bash
+---
+
+#### コマンドプロンプト（cmd.exe）
+
+```bat
 git clone https://github.com/rui1313131/flood-risk-detector.git
 cd flood-risk-detector
 python -m venv .venv
-source .venv/Scripts/activate
+.venv\Scripts\activate.bat
 pip install --upgrade pip wheel
 pip install -r requirements.txt
+
+REM 動作確認
+python run_site.py 36.496985 140.613220 --label "茨城県日立市久慈町三丁目"
 ```
 
-**PowerShell:**
+有効化に成功するとプロンプト先頭に `(.venv)` が付きます。
+
+---
+
+#### PowerShell
 
 ```powershell
 git clone https://github.com/rui1313131/flood-risk-detector.git
@@ -78,7 +89,37 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install --upgrade pip wheel
 pip install -r requirements.txt
+
+# 動作確認
+python run_site.py 36.496985 140.613220 --label "茨城県日立市久慈町三丁目"
 ```
+
+`Activate.ps1` で「このシステムではスクリプトの実行が無効になっているため…」と出る場合は、初回だけ実行ポリシーを許可：
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
+```
+
+---
+
+#### Git Bash（任意）
+
+```bash
+git clone https://github.com/rui1313131/flood-risk-detector.git
+cd flood-risk-detector
+python -m venv .venv
+source .venv/Scripts/activate
+pip install --upgrade pip wheel
+pip install -r requirements.txt
+
+# 動作確認
+python run_site.py 36.496985 140.613220 --label "茨城県日立市久慈町三丁目"
+```
+
+> **シェル取り違え注意:** PowerShell / cmd で `source ...` は **動きません**（`source` は bash 専用のコマンドです）。逆に Git Bash で `Activate.ps1` を直接叩いても動きません。
+
+---
 
 **SAGA GIS（任意）**: QGIS と完全一致させたい場合のみ [SourceForge](https://sourceforge.net/projects/saga-gis/) からダウンロードして `saga_cmd.exe` を PATH に追加。入れない場合は `--backend pure`（純 Python 実装の Wang & Liu、同一アルゴリズム）に自動フォールバックします。
 
