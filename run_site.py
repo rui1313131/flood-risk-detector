@@ -21,7 +21,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+# Force UTF-8 on Windows consoles so non-ASCII labels and ✓ marks don't crash
+# (default cp932/Shift-JIS can't encode U+2713 etc.).
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 from prefetch_test_sites import prefetch_site
 from prefetch_basemaps import BASEMAP_ZOOM
@@ -75,7 +85,7 @@ def main() -> None:
     # ---- 1. DEM + OSM buildings (skip if site.json already there) ----
     if (site_dir / "site.json").exists():
         print(f"=== {slug}: site.json exists → reuse prefetched DEM/OSM")
-        info = json.loads((site_dir / "site.json").read_text())
+        info = json.loads((site_dir / "site.json").read_text(encoding="utf-8"))
     else:
         # prefetch_test_sites.HALF_SIDE_DEG is module-level; override here
         # by patching the module constant before calling prefetch_site so the

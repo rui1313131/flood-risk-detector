@@ -66,7 +66,7 @@ def geocode(
     """
     cache = _cache_path(query, country)
     if use_cache and cache.is_file():
-        return json.loads(cache.read_text())
+        return json.loads(cache.read_text(encoding="utf-8"))
 
     params = {
         "q": query,
@@ -100,7 +100,7 @@ def geocode(
 
     if use_cache:
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps(out, ensure_ascii=False))
+        cache.write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
 
     return out
 

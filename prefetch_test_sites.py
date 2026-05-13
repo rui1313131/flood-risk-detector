@@ -122,7 +122,8 @@ def prefetch_site(site: dict, root: Path) -> dict:
         "elev_min_m": float(arr.min()),
         "elev_max_m": float(arr.max()),
     }
-    (out_dir / "site.json").write_text(json.dumps(info, indent=2, ensure_ascii=False))
+    (out_dir / "site.json").write_text(
+        json.dumps(info, indent=2, ensure_ascii=False), encoding="utf-8")
     return info
 
 
@@ -140,7 +141,7 @@ def main() -> None:
             summary.append({"slug": site["slug"], "error": str(e)})
 
     (root / "prefetch_summary.json").write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False)
+        json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8",
     )
     print(f"\nSummary written: {root / 'prefetch_summary.json'}")
 

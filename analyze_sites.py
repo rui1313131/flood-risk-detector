@@ -60,7 +60,10 @@ SINK_MIN_DEPTH      = 0.05  # セル単位 — 深さがこれ未満のセルは
 SINK_MIN_MAX_DEPTH  = 0.50  # 窪地単位 — 最深点がこれ未満の窪地は丸ごと捨てる。
                             # GSI 5m DEM 写真測量精度 (±30 cm) の倍を確保。
 SINK_MIN_AREA       = 1000.0 # 窪地単位 — 約 32 m × 32 m。GSI 1/25,000 で視認可能。
-SINK_BACKEND   = "saga"     # QGIS-faithful Wang & Liu (= FillSink そのもの)
+SINK_BACKEND   = "auto"     # saga > richdem > pure — auto picks the best available.
+                            # SAGA は QGIS バイト一致だが Windows では別途導入が必要。
+                            # 未導入時は pure (同一の Wang & Liu アルゴリズム) に
+                            # 自動フォールバックして Windows でも動作する。
 
 # Drop sinks whose base (lowest interior elevation) is above this threshold.
 # Matches the user-supplied 12-cell flood palette upper bound (≥10 m = "red").
@@ -108,9 +111,11 @@ ID_LABEL_FONTSIZE = 9
 ID_LABEL_COLOR    = "white"
 ID_LABEL_HALO     = "black"
 
-# CJK font selection
-for _cand in ("Noto Sans CJK JP", "Noto Sans CJK HK", "Noto Sans CJK SC",
-              "IPAexGothic", "TakaoGothic"):
+# CJK font selection — Windows defaults (Yu Gothic / Meiryo / MS Gothic) checked
+# first, then Linux/macOS CJK fonts.
+for _cand in ("Yu Gothic", "Meiryo", "MS Gothic",
+              "Noto Sans CJK JP", "Noto Sans CJK HK", "Noto Sans CJK SC",
+              "Hiragino Sans", "IPAexGothic", "TakaoGothic"):
     if any(f.name == _cand for f in fm.fontManager.ttflist):
         plt.rcParams["font.family"] = _cand
         break
@@ -202,7 +207,7 @@ def load_basemap_for_dem(site_dir: Path,
 # --------------------------------------------------------------------------- #
 
 def analyse_site(site_dir: Path) -> dict:
-    info = json.loads((site_dir / "site.json").read_text())
+    info = json.loads((site_dir / "site.json").read_text(encoding="utf-8"))
     slug = info["slug"]
     dem_path = site_dir / "dem_utm.tif"
     print(f"\n=== {slug} ({info['label']}) ===")
@@ -348,7 +353,7 @@ def _user_bbox_outer_in_dem_crs(site_dir: Path, dem_crs) -> Optional[tuple[float
     site_json = site_dir / "site.json"
     if not site_json.exists():
         return None
-    info = json.loads(site_json.read_text())
+    info = json.loads(site_json.read_text(encoding="utf-8"))
     bbox = info.get("bbox_wgs84")
     if not bbox or len(bbox) != 4:
         return None
@@ -372,7 +377,7 @@ def _user_bbox_in_dem_crs(site_dir: Path, dem_crs) -> Optional[tuple[float, floa
     site_json = site_dir / "site.json"
     if not site_json.exists():
         return None
-    info = json.loads(site_json.read_text())
+    info = json.loads(site_json.read_text(encoding="utf-8"))
     bbox = info.get("bbox_wgs84")
     if not bbox or len(bbox) != 4:
         return None
@@ -780,7 +785,7 @@ def write_report(site_dir: Path,
             lines.append("")
     lines.append("==============================================================")
 
-    out.write_text("\n".join(lines))
+    out.write_text("\n".join(lines), encoding="utf-8")
     return out
 
 
@@ -803,7 +808,7 @@ def main() -> None:
             print(f"  ✗ FAILED for {site_dir.name}: {e}")
             summary.append({"slug": site_dir.name, "error": str(e)})
     (root / "analysis_summary.json").write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False))
+        json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nSummary: {root / 'analysis_summary.json'}")
 
 

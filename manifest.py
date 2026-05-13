@@ -133,5 +133,6 @@ def write_manifest(
         manifest.update(extra)
 
     out_path = out_dir / "manifest.json"
-    out_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
+    out_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return out_path

@@ -46,8 +46,10 @@ BUILDING_LINEWIDTH = 0.25
 
 
 # ---- Use a CJK font if available so the annotation renders ----------------
-for cand in ("Noto Sans CJK JP", "Noto Sans CJK HK", "Noto Sans CJK SC",
-             "IPAexGothic", "TakaoGothic"):
+# Windows defaults (Yu Gothic / Meiryo / MS Gothic) checked first.
+for cand in ("Yu Gothic", "Meiryo", "MS Gothic",
+             "Noto Sans CJK JP", "Noto Sans CJK HK", "Noto Sans CJK SC",
+             "Hiragino Sans", "IPAexGothic", "TakaoGothic"):
     if any(f.name == cand for f in fm.fontManager.ttflist):
         plt.rcParams["font.family"] = cand
         break
@@ -55,7 +57,7 @@ plt.rcParams["axes.unicode_minus"] = False
 
 
 def render_site(site_dir: Path) -> Path:
-    info = json.loads((site_dir / "site.json").read_text())
+    info = json.loads((site_dir / "site.json").read_text(encoding="utf-8"))
     dem_path = site_dir / "dem_utm.tif"
 
     with rasterio.open(dem_path) as src:

@@ -26,7 +26,7 @@ def main() -> None:
             print(f"=== {site_dir.name}  (basemap_utm.tif already exists, skip)")
             continue
 
-        info = json.loads((site_dir / "site.json").read_text())
+        info = json.loads((site_dir / "site.json").read_text(encoding="utf-8"))
         print(f"\n=== {site_dir.name} ({info['label']}) ===")
         bbox = tuple(info["bbox_wgs84"])
         fetch_gsi_basemap(bbox, site_dir, zoom=BASEMAP_ZOOM)

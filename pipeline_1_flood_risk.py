@@ -27,7 +27,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+# Force UTF-8 on Windows consoles so non-ASCII labels and ✓ marks don't crash
+# (default cp932/Shift-JIS can't encode U+2713 etc.).
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 import rasterio
 
@@ -176,7 +186,7 @@ def run(
     print(f"  rasters/       dem_utm.tif, depth.tif")
     print(f"  meta/          manifest.json, sinks.geojson")
     print("Done.")
-    return json.loads(Path(manifest_path).read_text())
+    return json.loads(Path(manifest_path).read_text(encoding="utf-8"))
 
 
 def main() -> None:
