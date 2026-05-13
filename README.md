@@ -50,6 +50,42 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### Windows
+
+`setup.sh` / `install.sh` は apt-get 前提なので Windows では使いません。Python と pip を直接使います。
+
+**事前準備:**
+- Python 3.10 以上（python.org または `winget install Python.Python.3.11`）
+- Git for Windows（Git Bash を使う場合）
+
+**Git Bash:**
+
+```bash
+git clone https://github.com/rui1313131/flood-risk-detector.git
+cd flood-risk-detector
+python -m venv .venv
+source .venv/Scripts/activate
+pip install --upgrade pip wheel
+pip install -r requirements.txt
+```
+
+**PowerShell:**
+
+```powershell
+git clone https://github.com/rui1313131/flood-risk-detector.git
+cd flood-risk-detector
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install --upgrade pip wheel
+pip install -r requirements.txt
+```
+
+**SAGA GIS（任意）**: QGIS と完全一致させたい場合のみ [SourceForge](https://sourceforge.net/projects/saga-gis/) からダウンロードして `saga_cmd.exe` を PATH に追加。入れない場合は `--backend pure`（純 Python 実装の Wang & Liu、同一アルゴリズム）に自動フォールバックします。
+
+**日本語フォント**: Windows 標準の Yu Gothic を matplotlib が自動検出するので追加インストール不要です。
+
+QGIS バイト一致が要件で SAGA セットアップが面倒な場合は **WSL2 + Ubuntu** を導入して `bash setup.sh` を使うのが最も簡単です。
+
 ## 使い方
 
 ### 1. 単一地点を解析（緯度経度を指定）
