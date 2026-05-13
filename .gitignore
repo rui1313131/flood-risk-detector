@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+.env
+.claude/
+cache/
+prefetch/
+results/
+tests/
+*.bak
+*.tif
+*.tiff
+*.geojson
+*.pptx
+.DS_Store
